@@ -7,6 +7,7 @@ import { TransactionListPage } from './features/transactions/TransactionListPage
 import { CalendarPage } from './features/calendar/CalendarPage'
 import { DashboardPage } from './features/dashboard/DashboardPage'
 import { AnalyticsPage } from './features/analytics/AnalyticsPage'
+import { SettingsPage } from './features/settings/SettingsPage'
 
 export type Tab = 'home' | 'quick-add' | 'calendar' | 'insights' | 'settings'
 
@@ -43,7 +44,7 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
       <header className="app-header">
         <div className="app-title-group">
           <h1 className="app-title">PaisaTrack</h1>
-          <span className="app-badge">Phase 5</span>
+          <span className="app-badge">Phase 6</span>
         </div>
         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
           ₹ INR • Local-first
@@ -117,57 +118,13 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
         )}
 
         {activeTab === 'settings' && (
-          <section
-            style={{
-              background: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-lg)',
-              padding: 'var(--space-lg)',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 'var(--space-md)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h2 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600 }}>
-                Settings
-              </h2>
-              <span
-                style={{
-                  fontSize: 'var(--font-size-xs)',
-                  color: 'var(--color-income)',
-                  background: 'var(--color-income-bg)',
-                  padding: '0.2rem 0.5rem',
-                  borderRadius: 'var(--radius-full)',
-                  fontWeight: 600,
-                }}
-              >
-                Phase 6
-              </span>
-            </div>
-
-            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-              Settings, category management, accounts, and JSON backup/restore are scheduled for Phase 6.
-            </p>
-
-            <div
-              style={{
-                padding: 'var(--space-sm) var(--space-md)',
-                background: 'var(--color-surface-elevated)',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--color-border-subtle)',
-                fontSize: 'var(--font-size-xs)',
-                color: 'var(--color-text-muted)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 'var(--space-2xs)',
-              }}
-            >
-              <div><strong>Active View:</strong> settings</div>
-              <div><strong>Currency:</strong> Indian Rupee (INR, ₹)</div>
-              <div><strong>Privacy:</strong> Zero telemetry • Local device storage</div>
-            </div>
-          </section>
+          <div>
+            <h2 className="sr-only">Settings</h2>
+            <SettingsPage
+              database={database}
+              onDataMutated={handleDataMutated}
+            />
+          </div>
         )}
       </main>
 
