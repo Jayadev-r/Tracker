@@ -60,7 +60,6 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
       <header className="app-header">
         <div className="app-title-group">
           <h1 className="app-title">PaisaTrack</h1>
-          <span className="app-badge">Phase 7</span>
           {!isOnline && (
             <span
               className="app-offline-badge"
@@ -73,7 +72,7 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
           )}
         </div>
         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
-          ₹ INR • Local-first
+          ₹ INR
         </span>
       </header>
 

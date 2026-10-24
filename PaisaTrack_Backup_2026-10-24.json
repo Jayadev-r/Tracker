@@ -1,0 +1,381 @@
+{
+  "format": "PaisaTrackBackup",
+  "version": 1,
+  "exportedAt": "2026-10-24T17:23:24.119Z",
+  "schemaVersion": 2,
+  "settings": {
+    "id": "app-settings",
+    "currency": "INR",
+    "locale": "en-IN",
+    "theme": "system",
+    "weekStartsOn": 1,
+    "defaultAccountId": "7f0dc41f-f99a-4177-8686-d4a08fa39db1",
+    "schemaVersion": 1,
+    "backupReminderEnabled": false,
+    "lastBackupAt": "2026-10-24T17:23:24.119Z",
+    "createdAt": "2026-10-24T17:22:21.540Z",
+    "updatedAt": "2026-10-24T17:23:14.553Z"
+  },
+  "categories": [
+    {
+      "id": "0755d1c7-6ac6-472b-836d-e6e632e3c2ae",
+      "name": "Groceries",
+      "type": "expense",
+      "icon": "ShoppingBag",
+      "color": "#10b981",
+      "aliases": [
+        "grocery",
+        "groceries",
+        "supermarket",
+        "provisions"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "0aa06cc7-1b4c-4fa6-9f63-e0a0858d6b5f",
+      "name": "Freelance",
+      "type": "income",
+      "icon": "Laptop",
+      "color": "#3b82f6",
+      "aliases": [
+        "freelance",
+        "side income",
+        "consulting"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "1dacaa5d-4430-4136-90d2-3ce1f1be8dfb",
+      "name": "Salary",
+      "type": "income",
+      "icon": "Briefcase",
+      "color": "#10b981",
+      "aliases": [
+        "salary",
+        "payroll",
+        "wages"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "1f707b37-b9b3-4c37-bc9e-dbeffd3a4d5f",
+      "name": "Travel",
+      "type": "expense",
+      "icon": "Plane",
+      "color": "#3b82f6",
+      "aliases": [
+        "travel",
+        "trip",
+        "flight",
+        "hotel"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "271dd956-45fe-46bd-81b2-e5b06aa6e8be",
+      "name": "Bills & Utilities",
+      "type": "expense",
+      "icon": "Zap",
+      "color": "#f59e0b",
+      "aliases": [
+        "bills",
+        "electricity",
+        "water",
+        "internet",
+        "wifi",
+        "utility"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "47826cb1-244a-433c-a40f-80b2da659fa9",
+      "name": "Entertainment",
+      "type": "expense",
+      "icon": "Film",
+      "color": "#a855f7",
+      "aliases": [
+        "entertainment",
+        "movies",
+        "cinema",
+        "ott",
+        "netflix"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "4df73014-bbf1-48fa-a692-f77bb4b6a2f5",
+      "name": "Personal Care",
+      "type": "expense",
+      "icon": "Sparkles",
+      "color": "#d946ef",
+      "aliases": [
+        "salon",
+        "grooming",
+        "haircut",
+        "personal care"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "6aa4a3a2-ce1a-45fa-b597-e502d908daca",
+      "name": "Business",
+      "type": "income",
+      "icon": "TrendingUp",
+      "color": "#06b6d4",
+      "aliases": [
+        "business",
+        "sales"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "6bd0f89c-4655-4324-88ea-32f90de623f2",
+      "name": "Other Income",
+      "type": "income",
+      "icon": "Wallet",
+      "color": "#64748b",
+      "aliases": [
+        "other income",
+        "cashback",
+        "bonus"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "6c44161d-d95c-4412-bbb8-7cd5a2f15208",
+      "name": "Miscellaneous",
+      "type": "expense",
+      "icon": "MoreHorizontal",
+      "color": "#64748b",
+      "aliases": [
+        "miscellaneous",
+        "misc",
+        "other expense"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "86a53840-cac6-44fc-8161-3c9ba123ccb7",
+      "name": "Fitness",
+      "type": "expense",
+      "icon": "Dumbbell",
+      "color": "#14b8a6",
+      "aliases": [
+        "fitness",
+        "gym",
+        "workout"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "8917afc2-ab3b-4bac-a0b0-ecf78b555b6d",
+      "name": "Shopping",
+      "type": "expense",
+      "icon": "Tag",
+      "color": "#ec4899",
+      "aliases": [
+        "shopping",
+        "clothes",
+        "electronics"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "b13a23f3-dcea-4a60-aff5-7092c064399f",
+      "name": "Education",
+      "type": "expense",
+      "icon": "GraduationCap",
+      "color": "#3b82f6",
+      "aliases": [
+        "education",
+        "course",
+        "books",
+        "tuition"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "b160b041-676e-4bae-90aa-95dd91142336",
+      "name": "Food",
+      "type": "expense",
+      "icon": "Utensils",
+      "color": "#f97316",
+      "aliases": [
+        "food",
+        "meal",
+        "lunch",
+        "dinner",
+        "snack"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "c6bd380a-2819-4c79-b49e-e5aeeee032d3",
+      "name": "Gifts",
+      "type": "expense",
+      "icon": "Gift",
+      "color": "#f43f5e",
+      "aliases": [
+        "gift",
+        "present",
+        "donation"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "ca2510b7-db38-4732-8548-01a5bf6505de",
+      "name": "Transport",
+      "type": "expense",
+      "icon": "Car",
+      "color": "#06b6d4",
+      "aliases": [
+        "transport",
+        "bus",
+        "taxi",
+        "auto",
+        "metro",
+        "cab",
+        "uber",
+        "ola"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "d4074e79-3cb3-4067-9765-1203ee8a1241",
+      "name": "Fuel",
+      "type": "expense",
+      "icon": "Fuel",
+      "color": "#eab308",
+      "aliases": [
+        "fuel",
+        "petrol",
+        "diesel"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "d532529d-bfeb-4ca6-8a36-a919de9a5244",
+      "name": "Rent",
+      "type": "expense",
+      "icon": "Home",
+      "color": "#6366f1",
+      "aliases": [
+        "rent",
+        "house rent"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "e4869182-942c-41a0-a299-0bec3cd9fb35",
+      "name": "Phone & EMI",
+      "type": "expense",
+      "icon": "Smartphone",
+      "color": "#8b5cf6",
+      "aliases": [
+        "phone emi",
+        "mobile emi",
+        "emi",
+        "mobile recharge",
+        "phone bill"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "ef5ddac9-ff55-4ada-bc18-0f871ce35dd9",
+      "name": "Gift Received",
+      "type": "income",
+      "icon": "Gift",
+      "color": "#ec4899",
+      "aliases": [
+        "gift received"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "fb4c803a-b129-4ede-9f17-c9ed567d2226",
+      "name": "Health",
+      "type": "expense",
+      "icon": "HeartPulse",
+      "color": "#ef4444",
+      "aliases": [
+        "health",
+        "doctor",
+        "medicine",
+        "pharmacy",
+        "hospital"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    },
+    {
+      "id": "feac991a-202d-493d-b8fc-c5b19cc68272",
+      "name": "Interest",
+      "type": "income",
+      "icon": "Percent",
+      "color": "#8b5cf6",
+      "aliases": [
+        "interest",
+        "dividend",
+        "fd return"
+      ],
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    }
+  ],
+  "accounts": [
+    {
+      "id": "7f0dc41f-f99a-4177-8686-d4a08fa39db1",
+      "name": "Cash",
+      "type": "cash",
+      "openingBalancePaise": 0,
+      "openingBalanceDate": "2026-10-24",
+      "isArchived": false,
+      "createdAt": "2026-10-24T17:22:21.540Z",
+      "updatedAt": "2026-10-24T17:22:21.540Z"
+    }
+  ],
+  "transactions": [],
+  "budgets": []
+}
