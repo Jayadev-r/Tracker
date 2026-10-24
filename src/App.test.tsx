@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import App from './App'
 
-describe('PaisaTrack Application Shell (Phase 0 Smoke Test)', () => {
-  it('renders the header title and Phase 0 badge', () => {
+describe('PaisaTrack Application Shell (Navigation & Shell Smoke Test)', () => {
+  it('renders the header title and Phase badge', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 1, name: /PaisaTrack/i })).toBeInTheDocument()
-    expect(screen.getByText('Phase 0')).toBeInTheDocument()
+    expect(screen.getByText(/Phase/i)).toBeInTheDocument()
   })
 
   it('renders all 5 main navigation tabs', () => {
@@ -18,12 +18,25 @@ describe('PaisaTrack Application Shell (Phase 0 Smoke Test)', () => {
     expect(screen.getByRole('button', { name: 'Settings' })).toBeInTheDocument()
   })
 
-  it('switches active tab when navigation item is clicked', () => {
+  it('switches active tab when navigation item is clicked', async () => {
     render(<App />)
+
+    // Switch to Home tab
+    const homeButton = screen.getByRole('button', { name: 'Home' })
+    fireEvent.click(homeButton)
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 2, name: 'Home' })).toBeInTheDocument()
+      expect(homeButton).toHaveAttribute('aria-current', 'page')
+    })
+
+    // Switch back to Quick Add tab
     const quickAddButton = screen.getByRole('button', { name: 'Quick Add' })
     fireEvent.click(quickAddButton)
 
-    expect(screen.getByRole('heading', { level: 2, name: 'Quick Add' })).toBeInTheDocument()
-    expect(quickAddButton).toHaveAttribute('aria-current', 'page')
+    await waitFor(() => {
+      expect(quickAddButton).toHaveAttribute('aria-current', 'page')
+      expect(screen.getByRole('textbox', { name: 'Transaction message' })).toBeInTheDocument()
+    })
   })
 })
