@@ -48,3 +48,4 @@ tsconfig.tsbuildinfo
 *.njsproj
 *.sln
 *.sw?
+PaisaTrack_Backup_*.json

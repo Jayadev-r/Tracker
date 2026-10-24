@@ -3,10 +3,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import App from './App'
 
 describe('PaisaTrack Application Shell (Navigation & Shell Smoke Test)', () => {
-  it('renders the header title and Phase badge', () => {
+  it('renders the header title and currency label', () => {
     render(<App />)
     expect(screen.getByRole('heading', { level: 1, name: /PaisaTrack/i })).toBeInTheDocument()
-    expect(screen.getByText(/Phase/i)).toBeInTheDocument()
+    expect(screen.getByText(/INR/i)).toBeInTheDocument()
   })
 
   it('renders all 5 main navigation tabs', () => {
