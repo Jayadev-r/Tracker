@@ -20,13 +20,12 @@ import {
 } from '../transactions/types'
 import { TransactionItem } from '../transactions/TransactionItem'
 import { TransactionDetailModal } from '../transactions/TransactionDetailModal'
-import { parseTransaction, type TransactionDraft, type ParseResult } from '../chat-entry/parseTransaction'
-import { TransactionDraftCard } from '../chat-entry/TransactionDraftCard'
+import { AddTransactionModal } from '../transactions/AddTransactionModal'
 import {
   ChevronLeft,
   ChevronRight,
   Plus,
-  AlertCircle,
+  Check,
 } from 'lucide-react'
 import './calendar.css'
 
@@ -62,9 +61,9 @@ export function CalendarPage({
 
   const today = useMemo(() => getLocalTodayDateString(), [])
 
-  // Initial selected date defaults to today or passed valid date
+  // Initial selected date defaults to today or passed valid date (cannot be in the future)
   const [selectedDate, setSelectedDate] = useState<string>(() => {
-    if (initialSelectedDate && isValidLocalDateString(initialSelectedDate)) {
+    if (initialSelectedDate && isValidLocalDateString(initialSelectedDate) && initialSelectedDate <= today) {
       return initialSelectedDate
     }
     return today
@@ -101,12 +100,9 @@ export function CalendarPage({
   const [selectedModalItem, setSelectedModalItem] = useState<DisplayTransactionItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
-  // Quick Add for selected date state
-  const [isQuickAddOpen, setIsQuickAddOpen] = useState<boolean>(false)
-  const [quickAddInput, setQuickAddInput] = useState<string>('')
-  const [quickAddDraft, setQuickAddDraft] = useState<TransactionDraft | null>(null)
-  const [quickAddError, setQuickAddError] = useState<string | null>(null)
-  const [isSavingDraft, setIsSavingDraft] = useState<boolean>(false)
+  // Shared Add Transaction modal state & toast
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Load metadata
   useEffect(() => {
@@ -173,19 +169,21 @@ export function CalendarPage({
     loadDayData()
   }, [loadDayData, refreshTrigger])
 
-  // Month navigation
+  // Month navigation: prevent navigating to future months
+  const currentMonthStart = useMemo(() => getMonthStartLocalDateString(today), [today])
+  const isNextMonthDisabled = currentMonthDate >= currentMonthStart
+
   const handlePrevMonth = () => {
     const prevMonth = getPreviousMonthLocalDateString(currentMonthDate)
     setCurrentMonthDate(prevMonth)
-    // Select the first day of the previous month
     setSelectedDate(prevMonth)
   }
 
   const handleNextMonth = () => {
+    if (isNextMonthDisabled) return
     const nextMonth = getNextMonthLocalDateString(currentMonthDate)
     setCurrentMonthDate(nextMonth)
-    // Select the first day of the next month
-    setSelectedDate(nextMonth)
+    setSelectedDate(nextMonth > today ? today : nextMonth)
   }
 
   // Parse Month and Year for title
@@ -216,7 +214,6 @@ export function CalendarPage({
       : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
   // Leading blank cells
-  // new Date(year, monthIndex, 1).getDay(): 0 is Sunday, 1 is Monday ...
   const firstDayWeekday = new Date(yearNum, monthNum - 1, 1).getDay()
   const leadingBlankCount =
     weekStartsOn === 1
@@ -228,105 +225,15 @@ export function CalendarPage({
     return groupTransactionsForDisplay(dayTransactions, accounts, categories)
   }, [dayTransactions, accounts, categories])
 
-  // Handle Quick Add submission for selected date
-  const handleQuickAddSubmit = () => {
-    if (!quickAddInput.trim() || isSavingDraft) return
-    setQuickAddError(null)
-
-    const result: ParseResult = parseTransaction(quickAddInput.trim(), {
-      categories,
-      accounts,
-      defaultAccountId: settings?.defaultAccountId ?? null,
-      defaultDate: selectedDate, // Preserves the selected calendar date!
-    })
-
-    if (result.status === 'invalid') {
-      setQuickAddError(result.message)
-    } else if (result.status === 'needs_clarification') {
-      if (result.draft.amountPaise) {
-        setQuickAddDraft({
-          type: result.draft.type ?? 'expense',
-          amountPaise: result.draft.amountPaise,
-          categoryId: result.draft.categoryId ?? null,
-          accountId: result.draft.accountId ?? settings?.defaultAccountId ?? accounts[0]?.id ?? null,
-          transferToAccountId: result.draft.transferToAccountId ?? null,
-          description: result.draft.description ?? quickAddInput.trim(),
-          transactionDate: selectedDate,
-          source: 'form',
-          originalText: quickAddInput.trim(),
-          refundOfId: null,
-        })
-      } else {
-        setQuickAddError(result.questions[0] ?? 'Could not parse transaction amount.')
-      }
-    } else if (result.status === 'success') {
-      // Ensure date is retained
-      setQuickAddDraft({
-        ...result.draft,
-        transactionDate: result.draft.transactionDate || selectedDate,
-      })
-    }
-  }
-
-  // Save the draft created for the selected date
-  const handleSaveDraft = async (draft: TransactionDraft) => {
-    setIsSavingDraft(true)
-    setQuickAddError(null)
-    try {
-      if (draft.type === 'transfer') {
-        if (!draft.accountId || !draft.transferToAccountId) {
-          throw new Error('Please select both source and destination accounts.')
-        }
-        await txService.createTransfer({
-          sourceAccountId: draft.accountId,
-          destinationAccountId: draft.transferToAccountId,
-          amountPaise: draft.amountPaise,
-          transactionDate: draft.transactionDate,
-          description: draft.description,
-          source: 'form',
-        })
-      } else if (draft.type === 'refund') {
-        if (!draft.accountId) {
-          throw new Error('Please select an account.')
-        }
-        await txService.createRefund({
-          amountPaise: draft.amountPaise,
-          accountId: draft.accountId,
-          categoryId: draft.categoryId,
-          description: draft.description,
-          transactionDate: draft.transactionDate,
-          refundOfId: draft.refundOfId,
-          source: 'form',
-        })
-      } else {
-        if (!draft.accountId) {
-          throw new Error('Please select an account.')
-        }
-        await txService.createTransaction({
-          type: draft.type,
-          amountPaise: draft.amountPaise,
-          categoryId: draft.categoryId,
-          accountId: draft.accountId,
-          description: draft.description,
-          transactionDate: draft.transactionDate,
-          source: 'form',
-        })
-      }
-
-      // Reset Quick Add state
-      setQuickAddDraft(null)
-      setQuickAddInput('')
-      setIsQuickAddOpen(false)
-
-      // Refresh Month data, Day data, and notify parent
-      loadMonthData()
-      loadDayData()
-      onTransactionMutated?.()
-    } catch (err) {
-      setQuickAddError(err instanceof Error ? err.message : 'Failed to save transaction.')
-    } finally {
-      setIsSavingDraft(false)
-    }
+  // Handle Add Transaction Success
+  const handleAddTransactionSuccess = (savedTx: Transaction) => {
+    loadMonthData()
+    loadDayData()
+    onTransactionMutated?.()
+    setToastMessage(`Transaction of ₹${(savedTx.amountPaise / 100).toFixed(2)} added successfully!`)
+    setTimeout(() => {
+      setToastMessage(null)
+    }, 3000)
   }
 
   // Handle detail modal callbacks
@@ -352,6 +259,14 @@ export function CalendarPage({
 
   return (
     <div className="calendar-container">
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div className="toast-banner" role="status" aria-live="polite">
+          <Check size={16} />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Month Navigation Header */}
       <div className="calendar-header">
         <h2 className="calendar-month-title">{monthTitle}</h2>
@@ -368,7 +283,9 @@ export function CalendarPage({
             type="button"
             className="calendar-nav-btn"
             onClick={handleNextMonth}
+            disabled={isNextMonthDisabled}
             aria-label="Next month"
+            title={isNextMonthDisabled ? 'Future months unavailable' : 'Next month'}
           >
             <ChevronRight size={20} />
           </button>
@@ -399,6 +316,7 @@ export function CalendarPage({
             const dayDateStr = `${yearNum}-${String(monthNum).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`
             const isToday = dayDateStr === today
             const isSelected = dayDateStr === selectedDate
+            const isFuture = dayDateStr > today
             const txsOnDay = monthDateMap.get(dayDateStr) ?? []
             const hasTxs = txsOnDay.length > 0
             const hasIncome = txsOnDay.some((t) => t.type === 'income')
@@ -409,6 +327,7 @@ export function CalendarPage({
               'calendar-day-btn',
               isToday ? 'calendar-day-today' : '',
               isSelected ? 'calendar-day-selected' : '',
+              isFuture ? 'calendar-day-future' : '',
             ]
               .filter(Boolean)
               .join(' ')
@@ -418,8 +337,14 @@ export function CalendarPage({
                 key={dayDateStr}
                 type="button"
                 className={classNames}
-                onClick={() => setSelectedDate(dayDateStr)}
-                aria-label={`${dayDateStr}${isToday ? ' (today)' : ''}${isSelected ? ' (selected)' : ''}, ${txsOnDay.length} transactions`}
+                onClick={() => {
+                  if (!isFuture) {
+                    setSelectedDate(dayDateStr)
+                  }
+                }}
+                disabled={isFuture}
+                aria-disabled={isFuture}
+                aria-label={`${dayDateStr}${isToday ? ' (today)' : ''}${isSelected ? ' (selected)' : ''}${isFuture ? ' (future date - unavailable)' : ''}, ${txsOnDay.length} transactions`}
                 aria-pressed={isSelected}
               >
                 <span className="calendar-day-number">{dayNum}</span>
@@ -441,10 +366,23 @@ export function CalendarPage({
         {/* Daily Summary Card */}
         <div className="daily-summary-card">
           <div className="daily-summary-header">
-            <h3 className="daily-summary-title">Summary for {selectedDate}</h3>
-            <span className="daily-summary-badge">
-              {dayTransactions.length} {dayTransactions.length === 1 ? 'transaction' : 'transactions'}
-            </span>
+            <div>
+              <h3 className="daily-summary-title">Summary for {selectedDate === today ? `Today (${selectedDate})` : selectedDate}</h3>
+              <span className="daily-summary-badge">
+                {dayTransactions.length} {dayTransactions.length === 1 ? 'transaction' : 'transactions'}
+              </span>
+            </div>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => setIsAddModalOpen(true)}
+              disabled={selectedDate > today}
+              style={{ minHeight: '36px', padding: '0.4rem 0.85rem', fontSize: 'var(--font-size-xs)' }}
+              aria-label={`Add transaction for ${selectedDate}`}
+            >
+              <Plus size={14} />
+              <span>Add Transaction</span>
+            </button>
           </div>
 
           <div className="daily-summary-grid">
@@ -478,94 +416,18 @@ export function CalendarPage({
           </div>
         </div>
 
-        {/* Quick Add for Selected Date */}
+        {/* Add Transaction Section for Selected Date */}
         <div className="calendar-add-section">
-          {!isQuickAddOpen ? (
-            <button
-              type="button"
-              className="calendar-add-toggle-btn"
-              onClick={() => setIsQuickAddOpen(true)}
-              aria-label={`Add transaction for ${selectedDate}`}
-            >
-              <Plus size={18} />
-              <span>Add entry for {selectedDate}</span>
-            </button>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xs)' }}>
-              <div style={{ display: 'flex', gap: 'var(--space-2xs)' }}>
-                <input
-                  type="text"
-                  className="chat-input-field"
-                  placeholder={`e.g. 150 coffee on ${selectedDate}`}
-                  value={quickAddInput}
-                  onChange={(e) => setQuickAddInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault()
-                      handleQuickAddSubmit()
-                    }
-                  }}
-                  disabled={isSavingDraft}
-                  aria-label={`Enter transaction text for ${selectedDate}`}
-                />
-                <button
-                  type="button"
-                  className="btn-primary"
-                  onClick={handleQuickAddSubmit}
-                  disabled={!quickAddInput.trim() || isSavingDraft}
-                  style={{ minWidth: '44px', padding: '0 var(--space-sm)' }}
-                  aria-label="Parse entry"
-                >
-                  Add
-                </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => {
-                    setIsQuickAddOpen(false)
-                    setQuickAddDraft(null)
-                    setQuickAddError(null)
-                  }}
-                  disabled={isSavingDraft}
-                  style={{ minWidth: '44px', padding: '0 var(--space-xs)' }}
-                  aria-label="Cancel adding transaction"
-                >
-                  Cancel
-                </button>
-              </div>
-
-              {quickAddError && (
-                <div
-                  style={{
-                    background: 'var(--color-expense-bg)',
-                    color: 'var(--color-expense)',
-                    padding: 'var(--space-xs) var(--space-sm)',
-                    borderRadius: 'var(--radius-md)',
-                    fontSize: 'var(--font-size-xs)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--space-2xs)',
-                  }}
-                  role="alert"
-                >
-                  <AlertCircle size={14} />
-                  <span>{quickAddError}</span>
-                </div>
-              )}
-
-              {/* Draft card preview when parser succeeds */}
-              {quickAddDraft && (
-                <TransactionDraftCard
-                  draft={quickAddDraft}
-                  categories={categories}
-                  accounts={accounts}
-                  isSaving={isSavingDraft}
-                  onConfirm={handleSaveDraft}
-                  onCancel={() => setQuickAddDraft(null)}
-                />
-              )}
-            </div>
-          )}
+          <button
+            type="button"
+            className="calendar-add-toggle-btn"
+            onClick={() => setIsAddModalOpen(true)}
+            disabled={selectedDate > today}
+            aria-label={`Add transaction for ${selectedDate}`}
+          >
+            <Plus size={18} />
+            <span>Add transaction for {selectedDate === today ? 'Today' : selectedDate}</span>
+          </button>
         </div>
 
         {/* Selected Day's Transactions */}
@@ -596,6 +458,18 @@ export function CalendarPage({
           </div>
         )}
       </div>
+
+      {/* Shared Add Transaction Modal */}
+      <AddTransactionModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={handleAddTransactionSuccess}
+        categories={categories}
+        accounts={accounts}
+        defaultAccountId={settings?.defaultAccountId}
+        initialDate={selectedDate}
+        txService={txService}
+      />
 
       {/* Transaction Detail & Edit Modal */}
       <TransactionDetailModal

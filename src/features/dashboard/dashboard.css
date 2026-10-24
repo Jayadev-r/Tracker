@@ -249,3 +249,40 @@
   color: var(--color-text-muted);
   margin-left: var(--space-2xs);
 }
+
+/* Floating Action Button (+ button for manual transaction creation) */
+.dashboard-fab-btn {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-md));
+  right: max(var(--space-md), calc((100vw - var(--max-app-width)) / 2 + var(--space-md)));
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-brand);
+  color: var(--color-brand-contrast, #ffffff);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-nav);
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.dashboard-fab-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.dashboard-fab-btn:active {
+  transform: scale(0.94);
+}
+
+.dashboard-fab-btn:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 3px;
+}
+

@@ -16,11 +16,14 @@ import { formatPaise } from '../../utils/money'
 import { groupTransactionsForDisplay, type DisplayTransactionItem } from '../transactions/types'
 import { TransactionItem } from '../transactions/TransactionItem'
 import { TransactionDetailModal } from '../transactions/TransactionDetailModal'
+import { AddTransactionModal } from '../transactions/AddTransactionModal'
 import {
   ChevronRight,
   Percent,
   Clock,
   Inbox,
+  Plus,
+  Check,
 } from 'lucide-react'
 import './dashboard.css'
 
@@ -67,6 +70,10 @@ export function DashboardPage({
   // Transaction detail modal state
   const [selectedModalItem, setSelectedModalItem] = useState<DisplayTransactionItem | null>(null)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+
+  // Add transaction modal & toast state
+  const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const today = useMemo(() => getLocalTodayDateString(), [])
 
@@ -169,6 +176,15 @@ export function DashboardPage({
   const handleModalDeleted = () => {
     loadDashboardData()
     onTransactionMutated?.()
+  }
+
+  const handleAddTransactionSuccess = (savedTx: Transaction) => {
+    loadDashboardData()
+    onTransactionMutated?.()
+    setToastMessage(`Transaction of ₹${(savedTx.amountPaise / 100).toFixed(2)} added successfully!`)
+    setTimeout(() => {
+      setToastMessage(null)
+    }, 3000)
   }
 
   const isPositiveRemaining = summary.remainingFromRecordedIncomePaise >= 0
@@ -375,6 +391,37 @@ export function DashboardPage({
           </div>
         </>
       )}
+
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div className="toast-banner" role="status" aria-live="polite">
+          <Check size={16} />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Floating Action Button (+ button for manual transaction creation) */}
+      <button
+        type="button"
+        className="dashboard-fab-btn"
+        onClick={() => setIsAddModalOpen(true)}
+        aria-label="Add transaction"
+        title="Add transaction"
+      >
+        <Plus size={28} strokeWidth={2.5} />
+      </button>
+
+      {/* Shared Add Transaction Modal */}
+      <AddTransactionModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onSuccess={handleAddTransactionSuccess}
+        categories={categories}
+        accounts={accounts}
+        defaultAccountId={settings?.defaultAccountId}
+        initialDate={today}
+        txService={txService}
+      />
 
       {/* Transaction Details / Edit Modal */}
       <TransactionDetailModal
