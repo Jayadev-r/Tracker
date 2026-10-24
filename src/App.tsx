@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Home, MessageSquarePlus, Calendar, PieChart, Settings } from 'lucide-react'
+import { Home, MessageSquarePlus, Calendar, PieChart, Settings, ArrowLeft } from 'lucide-react'
 import type { PaisaTrackDatabase } from './db/database'
 import { db as defaultDb } from './db/database'
 import { ChatPage } from './features/chat-entry/ChatPage'
 import { TransactionListPage } from './features/transactions/TransactionListPage'
 import { CalendarPage } from './features/calendar/CalendarPage'
+import { DashboardPage } from './features/dashboard/DashboardPage'
+import { AnalyticsPage } from './features/analytics/AnalyticsPage'
 
 export type Tab = 'home' | 'quick-add' | 'calendar' | 'insights' | 'settings'
 
@@ -29,6 +31,7 @@ interface AppProps {
 
 export default function App({ database = defaultDb, initialTab = 'quick-add' }: AppProps) {
   const [activeTab, setActiveTab] = useState<Tab>(initialTab)
+  const [homeView, setHomeView] = useState<'dashboard' | 'history'>('dashboard')
   const [dataRevision, setDataRevision] = useState<number>(0)
 
   const handleDataMutated = () => {
@@ -40,7 +43,7 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
       <header className="app-header">
         <div className="app-title-group">
           <h1 className="app-title">PaisaTrack</h1>
-          <span className="app-badge">Phase 4</span>
+          <span className="app-badge">Phase 5</span>
         </div>
         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
           ₹ INR • Local-first
@@ -51,11 +54,40 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
         {activeTab === 'home' && (
           <div>
             <h2 className="sr-only">Home</h2>
-            <TransactionListPage
-              database={database}
-              refreshTrigger={dataRevision}
-              onTransactionMutated={handleDataMutated}
-            />
+            {homeView === 'dashboard' ? (
+              <DashboardPage
+                database={database}
+                refreshTrigger={dataRevision}
+                onTransactionMutated={handleDataMutated}
+                onViewAllTransactions={() => setHomeView('history')}
+              />
+            ) : (
+              <div>
+                <div style={{ marginBottom: 'var(--space-xs)' }}>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => setHomeView('dashboard')}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-2xs)',
+                      padding: 'var(--space-2xs) var(--space-sm)',
+                      fontSize: 'var(--font-size-xs)',
+                    }}
+                    aria-label="Back to Dashboard"
+                  >
+                    <ArrowLeft size={14} />
+                    <span>Back to Dashboard</span>
+                  </button>
+                </div>
+                <TransactionListPage
+                  database={database}
+                  refreshTrigger={dataRevision}
+                  onTransactionMutated={handleDataMutated}
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -74,7 +106,17 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
           />
         )}
 
-        {(activeTab === 'insights' || activeTab === 'settings') && (
+        {activeTab === 'insights' && (
+          <div>
+            <h2 className="sr-only">Insights</h2>
+            <AnalyticsPage
+              database={database}
+              refreshTrigger={dataRevision}
+            />
+          </div>
+        )}
+
+        {activeTab === 'settings' && (
           <section
             style={{
               background: 'var(--color-surface)',
@@ -88,7 +130,7 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ fontSize: 'var(--font-size-base)', fontWeight: 600 }}>
-                {NAV_TABS.find((t) => t.id === activeTab)?.label ?? 'Overview'}
+                Settings
               </h2>
               <span
                 style={{
@@ -100,12 +142,12 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
                   fontWeight: 600,
                 }}
               >
-                Ready
+                Phase 6
               </span>
             </div>
 
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-              {`Section "${NAV_TABS.find((t) => t.id === activeTab)?.label}" is prepared for implementation in subsequent phases.`}
+              Settings, category management, accounts, and JSON backup/restore are scheduled for Phase 6.
             </p>
 
             <div
@@ -121,7 +163,7 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
                 gap: 'var(--space-2xs)',
               }}
             >
-              <div><strong>Active View:</strong> {activeTab}</div>
+              <div><strong>Active View:</strong> settings</div>
               <div><strong>Currency:</strong> Indian Rupee (INR, ₹)</div>
               <div><strong>Privacy:</strong> Zero telemetry • Local device storage</div>
             </div>

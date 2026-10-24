@@ -35,6 +35,15 @@ export interface DailySummary {
   transactionCount: number
 }
 
+export interface PeriodComparison {
+  currentPeriod: PeriodSummary
+  previousPeriod: PeriodSummary
+  netExpenseChangePaise: number
+  netExpenseChangePercentage: number | null
+  incomeChangePaise: number
+  incomeChangePercentage: number | null
+}
+
 /**
  * Pure calculation functions for financial reporting.
  * Completely decoupled from UI and database access.
@@ -255,6 +264,60 @@ export class ReportingService {
       .toArray()
 
     return calculateDailySummaries(transactions)
+  }
+
+  /**
+   * Compares the current period metrics against the previous period metrics.
+   */
+  async getPeriodComparison(
+    currentStart: string,
+    currentEnd: string,
+    previousStart: string,
+    previousEnd: string
+  ): Promise<PeriodComparison> {
+    const [currentPeriod, previousPeriod] = await Promise.all([
+      this.getPeriodSummary(currentStart, currentEnd),
+      this.getPeriodSummary(previousStart, previousEnd),
+    ])
+
+    return calculatePeriodComparison(currentPeriod, previousPeriod)
+  }
+}
+
+/**
+ * Compares two period summaries and calculates differences and percentage changes.
+ * Avoids NaN or Infinity by returning null when previous denominators are zero or negative.
+ */
+export function calculatePeriodComparison(
+  currentPeriod: PeriodSummary,
+  previousPeriod: PeriodSummary
+): PeriodComparison {
+  const netExpenseChangePaise = subtractPaise(
+    currentPeriod.netExpensesPaise,
+    previousPeriod.netExpensesPaise
+  )
+  let netExpenseChangePercentage: number | null = null
+  if (previousPeriod.netExpensesPaise > 0) {
+    netExpenseChangePercentage =
+      (netExpenseChangePaise / previousPeriod.netExpensesPaise) * 100
+  }
+
+  const incomeChangePaise = subtractPaise(
+    currentPeriod.incomePaise,
+    previousPeriod.incomePaise
+  )
+  let incomeChangePercentage: number | null = null
+  if (previousPeriod.incomePaise > 0) {
+    incomeChangePercentage = (incomeChangePaise / previousPeriod.incomePaise) * 100
+  }
+
+  return {
+    currentPeriod,
+    previousPeriod,
+    netExpenseChangePaise,
+    netExpenseChangePercentage,
+    incomeChangePaise,
+    incomeChangePercentage,
   }
 }
 

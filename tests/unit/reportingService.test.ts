@@ -3,6 +3,7 @@ import {
   calculatePeriodSummary,
   calculateCategorySummaries,
   calculateDailySummaries,
+  calculatePeriodComparison,
 } from '../../src/services/reportingService'
 import type { Transaction, Category } from '../../src/types'
 import { generateUuid } from '../../src/utils/ids'
@@ -360,6 +361,109 @@ describe('Reporting Service & Financial Formulas (Phase 2)', () => {
       expect(day2?.grossExpensesPaise).toBe(3000)
       expect(day2?.netExpensesPaise).toBe(3000)
       expect(day2?.transactionCount).toBe(1)
+    })
+  })
+
+  describe('Period Comparison Calculations', () => {
+    it('calculates net expense and income changes with accurate percentages', () => {
+      const current = calculatePeriodSummary([
+        {
+          id: 'tx-cur-inc',
+          type: 'income',
+          amountPaise: 5000000, // ₹50,000
+          categoryId: salaryCategoryId,
+          accountId,
+          description: 'Salary',
+          transactionDate: '2026-10-01',
+          createdAt: now,
+          updatedAt: now,
+          source: 'form',
+          transferGroupId: null,
+          refundOfId: null,
+        },
+        {
+          id: 'tx-cur-exp',
+          type: 'expense',
+          amountPaise: 3000000, // ₹30,000
+          categoryId: foodCategoryId,
+          accountId,
+          description: 'Food',
+          transactionDate: '2026-10-05',
+          createdAt: now,
+          updatedAt: now,
+          source: 'form',
+          transferGroupId: null,
+          refundOfId: null,
+        },
+      ])
+
+      const previous = calculatePeriodSummary([
+        {
+          id: 'tx-prev-inc',
+          type: 'income',
+          amountPaise: 4000000, // ₹40,000
+          categoryId: salaryCategoryId,
+          accountId,
+          description: 'Prev Salary',
+          transactionDate: '2026-09-01',
+          createdAt: now,
+          updatedAt: now,
+          source: 'form',
+          transferGroupId: null,
+          refundOfId: null,
+        },
+        {
+          id: 'tx-prev-exp',
+          type: 'expense',
+          amountPaise: 2000000, // ₹20,000
+          categoryId: foodCategoryId,
+          accountId,
+          description: 'Prev Food',
+          transactionDate: '2026-09-05',
+          createdAt: now,
+          updatedAt: now,
+          source: 'form',
+          transferGroupId: null,
+          refundOfId: null,
+        },
+      ])
+
+      const comparison = calculatePeriodComparison(current, previous)
+
+      // Net Expense change: 30,000 - 20,000 = +10,000 paise (+50%)
+      expect(comparison.netExpenseChangePaise).toBe(1000000)
+      expect(comparison.netExpenseChangePercentage).toBe(50)
+
+      // Income change: 50,000 - 40,000 = +10,000 paise (+25%)
+      expect(comparison.incomeChangePaise).toBe(1000000)
+      expect(comparison.incomeChangePercentage).toBe(25)
+    })
+
+    it('handles zero denominators without producing NaN or Infinity', () => {
+      const current = calculatePeriodSummary([
+        {
+          id: 'tx-cur-exp',
+          type: 'expense',
+          amountPaise: 100000,
+          categoryId: foodCategoryId,
+          accountId,
+          description: 'Food',
+          transactionDate: '2026-10-05',
+          createdAt: now,
+          updatedAt: now,
+          source: 'form',
+          transferGroupId: null,
+          refundOfId: null,
+        },
+      ])
+
+      // Previous period had 0 income and 0 expenses
+      const emptyPrevious = calculatePeriodSummary([])
+
+      const comparison = calculatePeriodComparison(current, emptyPrevious)
+      expect(comparison.netExpenseChangePaise).toBe(100000)
+      expect(comparison.netExpenseChangePercentage).toBeNull() // null, never NaN or Infinity
+      expect(comparison.incomeChangePercentage).toBeNull() // null, never NaN or Infinity
     })
   })
 })

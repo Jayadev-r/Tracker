@@ -12,6 +12,10 @@ import {
   getNextMonthLocalDateString,
   compareLocalDates,
   isDateInRange,
+  getWeekStartLocalDateString,
+  getWeekEndLocalDateString,
+  getPreviousWeekStartLocalDateString,
+  getPreviousWeekEndLocalDateString,
 } from '../../src/utils/dates'
 import { ValidationError } from '../../src/utils/errors'
 
@@ -131,6 +135,28 @@ describe('Date Utilities and Calendar Boundaries (Phase 2)', () => {
       expect(isDateInRange('2026-10-31', '2026-10-01', '2026-10-31')).toBe(true)
       expect(isDateInRange('2026-09-30', '2026-10-01', '2026-10-31')).toBe(false)
       expect(isDateInRange('2026-11-01', '2026-10-01', '2026-10-31')).toBe(false)
+    })
+  })
+
+  describe('Week Boundary Calculations', () => {
+    // 2026-10-24 is a Saturday
+    // With weekStartsOn = 1 (Monday), current week is 2026-10-19 to 2026-10-25
+    it('calculates current week start and end (Monday-first)', () => {
+      const sat = new Date(2026, 9, 24)
+      expect(getWeekStartLocalDateString(sat, 1)).toBe('2026-10-19')
+      expect(getWeekEndLocalDateString(sat, 1)).toBe('2026-10-25')
+    })
+
+    it('calculates current week start and end (Sunday-first)', () => {
+      const sat = new Date(2026, 9, 24)
+      expect(getWeekStartLocalDateString(sat, 0)).toBe('2026-10-18')
+      expect(getWeekEndLocalDateString(sat, 0)).toBe('2026-10-24')
+    })
+
+    it('calculates previous week boundaries', () => {
+      const sat = new Date(2026, 9, 24)
+      expect(getPreviousWeekStartLocalDateString(sat, 1)).toBe('2026-10-12')
+      expect(getPreviousWeekEndLocalDateString(sat, 1)).toBe('2026-10-18')
     })
   })
 })

@@ -170,3 +170,56 @@ export function isDateInRange(dateStr: string, startDateStr: string, endDateStr:
   }
   return dateStr >= startDateStr && dateStr <= endDateStr
 }
+
+/**
+ * Returns the start of the week (YYYY-MM-DD) for a given reference date.
+ * Default weekStartsOn is 1 (Monday). 0 is Sunday.
+ */
+export function getWeekStartLocalDateString(
+  referenceDate: Date = new Date(),
+  weekStartsOn: 0 | 1 = 1
+): string {
+  const d = new Date(referenceDate)
+  const day = d.getDay()
+  const diff = weekStartsOn === 1 ? (day + 6) % 7 : day
+  d.setDate(d.getDate() - diff)
+  return getLocalTodayDateString(d)
+}
+
+/**
+ * Returns the end of the week (YYYY-MM-DD, 6 days after week start) for a given reference date.
+ */
+export function getWeekEndLocalDateString(
+  referenceDate: Date = new Date(),
+  weekStartsOn: 0 | 1 = 1
+): string {
+  const startStr = getWeekStartLocalDateString(referenceDate, weekStartsOn)
+  const parts = startStr.split('-')
+  const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]))
+  d.setDate(d.getDate() + 6)
+  return getLocalTodayDateString(d)
+}
+
+/**
+ * Returns the start of the previous week (YYYY-MM-DD).
+ */
+export function getPreviousWeekStartLocalDateString(
+  referenceDate: Date = new Date(),
+  weekStartsOn: 0 | 1 = 1
+): string {
+  const d = new Date(referenceDate)
+  d.setDate(d.getDate() - 7)
+  return getWeekStartLocalDateString(d, weekStartsOn)
+}
+
+/**
+ * Returns the end of the previous week (YYYY-MM-DD).
+ */
+export function getPreviousWeekEndLocalDateString(
+  referenceDate: Date = new Date(),
+  weekStartsOn: 0 | 1 = 1
+): string {
+  const d = new Date(referenceDate)
+  d.setDate(d.getDate() - 7)
+  return getWeekEndLocalDateString(d, weekStartsOn)
+}

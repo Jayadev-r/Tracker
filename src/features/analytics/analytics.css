@@ -1,0 +1,183 @@
+/* ==========================================================================
+   Analytics & Insights Styles (Mobile-first, iPhone 17 optimized)
+   ========================================================================== */
+
+.analytics-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: calc(var(--space-2xl) + env(safe-area-inset-bottom, 0px));
+}
+
+/* Card Container */
+.analytics-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.analytics-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.analytics-card-title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.analytics-card-badge {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-surface-elevated);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+/* Accessible Bar & Category Breakdown */
+.category-progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.category-progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.category-progress-labels {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--font-size-xs);
+}
+
+.category-progress-name {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.category-progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.category-progress-values {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.category-progress-track {
+  width: 100%;
+  height: 6px;
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.category-progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+/* Period Comparison Card */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xs);
+}
+
+.comparison-box {
+  background: var(--color-surface-elevated);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.comparison-box-label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.comparison-box-val {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.comparison-box-delta {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.delta-favorable {
+  color: var(--color-income);
+}
+
+.delta-unfavorable {
+  color: var(--color-expense);
+}
+
+.delta-neutral {
+  color: var(--color-text-muted);
+}
+
+/* Trend Table for Accessibility & Mobile scanning */
+.trend-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-xs);
+  margin-top: var(--space-xs);
+}
+
+.trend-summary-table th {
+  text-align: left;
+  padding: var(--space-2xs) var(--space-xs);
+  color: var(--color-text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.trend-summary-table td {
+  padding: var(--space-2xs) var(--space-xs);
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.trend-summary-table td.amount-col {
+  text-align: right;
+  font-weight: 600;
+}
+
+/* Empty Chart State */
+.analytics-empty-state {
+  padding: var(--space-xl) var(--space-md);
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-xs);
+}
