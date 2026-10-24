@@ -1,0 +1,101 @@
+/* App Shell & Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: var(--max-app-width);
+  margin: 0 auto;
+  background-color: var(--color-bg);
+  position: relative;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+}
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-header);
+  padding: calc(var(--safe-top) + var(--space-sm)) var(--space-md) var(--space-sm);
+  background-color: rgba(15, 20, 28, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.app-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.app-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+}
+
+.app-badge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface-elevated);
+  color: var(--color-brand);
+  border: 1px solid var(--color-border);
+}
+
+/* Main Content Area */
+.app-main {
+  flex: 1;
+  padding: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-md));
+  overflow-y: auto;
+}
+
+/* Bottom Navigation Shell */
+.app-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-width: var(--max-app-width);
+  margin: 0 auto;
+  height: calc(var(--bottom-nav-height) + var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
+  background-color: rgba(23, 31, 44, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: var(--z-nav);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: var(--bottom-nav-height);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  gap: 2px;
+  transition: color 0.15s ease;
+}
+
+.nav-item.active {
+  color: var(--color-brand);
+}
+
+.nav-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: -2px;
+}
