@@ -161,7 +161,7 @@ export function PreferencesSection({
           There are no remote servers, cloud databases, analytics SDKs, advertising trackers, or external APIs.
         </div>
         <div style={{ borderTop: '1px solid var(--color-border-subtle)', paddingTop: 'var(--space-xs)', display: 'flex', flexDirection: 'column', gap: '2px', color: 'var(--color-text-muted)' }}>
-          <div><strong>App Version:</strong> 1.0 (Phase 6)</div>
+          <div><strong>App Version:</strong> 1.0 (Phase 7 - PWA)</div>
           <div><strong>Database Engine:</strong> Dexie IndexedDB (Schema v2)</div>
           <div><strong>Currency:</strong> Indian Rupee (INR, ₹)</div>
         </div>

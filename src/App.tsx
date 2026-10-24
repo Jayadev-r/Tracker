@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Home, MessageSquarePlus, Calendar, PieChart, Settings, ArrowLeft } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Home, MessageSquarePlus, Calendar, PieChart, Settings, ArrowLeft, WifiOff } from 'lucide-react'
 import type { PaisaTrackDatabase } from './db/database'
 import { db as defaultDb } from './db/database'
 import { ChatPage } from './features/chat-entry/ChatPage'
@@ -34,6 +34,22 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
   const [activeTab, setActiveTab] = useState<Tab>(initialTab)
   const [homeView, setHomeView] = useState<'dashboard' | 'history'>('dashboard')
   const [dataRevision, setDataRevision] = useState<number>(0)
+  const [isOnline, setIsOnline] = useState<boolean>(() =>
+    typeof navigator !== 'undefined' && 'onLine' in navigator ? navigator.onLine : true
+  )
+
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true)
+    const handleOffline = () => setIsOnline(false)
+
+    window.addEventListener('online', handleOnline)
+    window.addEventListener('offline', handleOffline)
+
+    return () => {
+      window.removeEventListener('online', handleOnline)
+      window.removeEventListener('offline', handleOffline)
+    }
+  }, [])
 
   const handleDataMutated = () => {
     setDataRevision((prev) => prev + 1)
@@ -44,7 +60,17 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
       <header className="app-header">
         <div className="app-title-group">
           <h1 className="app-title">PaisaTrack</h1>
-          <span className="app-badge">Phase 6</span>
+          <span className="app-badge">Phase 7</span>
+          {!isOnline && (
+            <span
+              className="app-offline-badge"
+              role="status"
+              aria-label="Offline Mode: All data is stored locally in IndexedDB"
+            >
+              <WifiOff size={11} aria-hidden="true" />
+              <span>Offline</span>
+            </span>
+          )}
         </div>
         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
           ₹ INR • Local-first

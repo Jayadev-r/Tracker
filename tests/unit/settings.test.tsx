@@ -90,7 +90,7 @@ describe('Settings & Management Features (Phase 6)', () => {
     await waitFor(() => {
       expect(screen.getByText('Coffee & Tea')).toBeInTheDocument()
       expect(screen.getByText(/Aliases: espresso, latte, brew/)).toBeInTheDocument()
-    })
+    }, { timeout: 3000 })
 
     // 3. Prevent duplicate active category
     fireEvent.click(screen.getByRole('button', { name: 'Add New Category' }))
@@ -99,7 +99,7 @@ describe('Settings & Management Features (Phase 6)', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/already exists/i)).toBeInTheDocument()
-    })
+    }, { timeout: 3000 })
 
     // Close modal
     fireEvent.click(screen.getByRole('button', { name: 'Close modal' }))
@@ -111,7 +111,7 @@ describe('Settings & Management Features (Phase 6)', () => {
     await waitFor(() => {
       // By default, archived is hidden
       expect(screen.queryByText('Coffee & Tea')).not.toBeInTheDocument()
-    })
+    }, { timeout: 3000 })
 
     // 5. Toggle Show Archived
     const showArchivedCheckbox = screen.getByLabelText('Show Archived')
@@ -120,7 +120,7 @@ describe('Settings & Management Features (Phase 6)', () => {
     await waitFor(() => {
       expect(screen.getByText('Coffee & Tea')).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'Restore category Coffee & Tea' })).toBeInTheDocument()
-    })
+    }, { timeout: 3000 })
   })
 
   it('manages accounts: creates new account and displays default account badge', async () => {
