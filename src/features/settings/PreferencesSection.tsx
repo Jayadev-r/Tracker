@@ -47,7 +47,15 @@ export function PreferencesSection({
 
     // Apply theme dynamically to document if theme changed
     if (updates.theme !== undefined) {
-      document.documentElement.setAttribute('data-theme', updates.theme)
+      localStorage.setItem('paisatrack_theme', updates.theme)
+      if (updates.theme === 'system') {
+        document.documentElement.removeAttribute('data-theme')
+        const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isSystemDark ? '#0f141c' : '#f8fafc')
+      } else {
+        document.documentElement.setAttribute('data-theme', updates.theme)
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', updates.theme === 'light' ? '#f8fafc' : '#0f141c')
+      }
     }
 
     setSaveFeedback('Preferences saved.')

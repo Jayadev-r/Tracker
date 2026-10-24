@@ -51,6 +51,51 @@ export default function App({ database = defaultDb, initialTab = 'quick-add' }: 
     }
   }, [])
 
+  useEffect(() => {
+    let isMounted = true
+    const applyTheme = async () => {
+      try {
+        const cached = localStorage.getItem('paisatrack_theme')
+        if (cached && cached !== 'system') {
+          document.documentElement.setAttribute('data-theme', cached)
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', cached === 'light' ? '#f8fafc' : '#0f141c')
+        }
+
+        if (!database.isOpen()) {
+          await database.open()
+        }
+        const settings = await database.settings.get('app-settings')
+        if (!isMounted) return
+        const theme = settings?.theme ?? cached ?? 'system'
+        if (theme === 'system') {
+          document.documentElement.removeAttribute('data-theme')
+          const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isSystemDark ? '#0f141c' : '#f8fafc')
+        } else {
+          document.documentElement.setAttribute('data-theme', theme)
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'light' ? '#f8fafc' : '#0f141c')
+        }
+      } catch {
+        // Fallback silently if database is initializing
+      }
+    }
+    applyTheme()
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    const handleMediaChange = (e: MediaQueryListEvent) => {
+      const currentTheme = localStorage.getItem('paisatrack_theme') ?? 'system'
+      if (currentTheme === 'system') {
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', e.matches ? '#0f141c' : '#f8fafc')
+      }
+    }
+    mediaQuery.addEventListener('change', handleMediaChange)
+
+    return () => {
+      isMounted = false
+      mediaQuery.removeEventListener('change', handleMediaChange)
+    }
+  }, [database, dataRevision])
+
   const handleDataMutated = () => {
     setDataRevision((prev) => prev + 1)
   }
