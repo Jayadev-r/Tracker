@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { Home, MessageSquarePlus, Calendar, PieChart, Settings } from 'lucide-react'
+import type { PaisaTrackDatabase } from './db/database'
+import { db as defaultDb } from './db/database'
 import { ChatPage } from './features/chat-entry/ChatPage'
+import { TransactionListPage } from './features/transactions/TransactionListPage'
+import { CalendarPage } from './features/calendar/CalendarPage'
 
-type Tab = 'home' | 'quick-add' | 'calendar' | 'insights' | 'settings'
+export type Tab = 'home' | 'quick-add' | 'calendar' | 'insights' | 'settings'
 
 interface NavTab {
   id: Tab
@@ -18,15 +22,25 @@ const NAV_TABS: readonly NavTab[] = [
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
-export default function App() {
-  const [activeTab, setActiveTab] = useState<Tab>('quick-add')
+interface AppProps {
+  database?: PaisaTrackDatabase
+  initialTab?: Tab
+}
+
+export default function App({ database = defaultDb, initialTab = 'quick-add' }: AppProps) {
+  const [activeTab, setActiveTab] = useState<Tab>(initialTab)
+  const [dataRevision, setDataRevision] = useState<number>(0)
+
+  const handleDataMutated = () => {
+    setDataRevision((prev) => prev + 1)
+  }
 
   return (
     <div className="app-container">
       <header className="app-header">
         <div className="app-title-group">
           <h1 className="app-title">PaisaTrack</h1>
-          <span className="app-badge">Phase 3</span>
+          <span className="app-badge">Phase 4</span>
         </div>
         <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--color-text-muted)' }}>
           ₹ INR • Local-first
@@ -34,9 +48,33 @@ export default function App() {
       </header>
 
       <main className="app-main">
-        {activeTab === 'quick-add' ? (
-          <ChatPage />
-        ) : (
+        {activeTab === 'home' && (
+          <div>
+            <h2 className="sr-only">Home</h2>
+            <TransactionListPage
+              database={database}
+              refreshTrigger={dataRevision}
+              onTransactionMutated={handleDataMutated}
+            />
+          </div>
+        )}
+
+        {activeTab === 'quick-add' && (
+          <ChatPage
+            database={database}
+            onTransactionCreated={handleDataMutated}
+          />
+        )}
+
+        {activeTab === 'calendar' && (
+          <CalendarPage
+            database={database}
+            refreshTrigger={dataRevision}
+            onTransactionMutated={handleDataMutated}
+          />
+        )}
+
+        {(activeTab === 'insights' || activeTab === 'settings') && (
           <section
             style={{
               background: 'var(--color-surface)',
@@ -67,9 +105,7 @@ export default function App() {
             </div>
 
             <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', lineHeight: 1.6 }}>
-              {activeTab === 'home'
-                ? 'Welcome to PaisaTrack. Use Quick Add below to record your transactions.'
-                : `Section "${NAV_TABS.find((t) => t.id === activeTab)?.label}" is prepared for implementation in subsequent phases.`}
+              {`Section "${NAV_TABS.find((t) => t.id === activeTab)?.label}" is prepared for implementation in subsequent phases.`}
             </p>
 
             <div

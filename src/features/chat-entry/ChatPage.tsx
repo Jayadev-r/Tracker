@@ -30,10 +30,15 @@ const EXAMPLE_PHRASES = [
 
 interface ChatPageProps {
   database?: PaisaTrackDatabase
+  initialDate?: string
   onTransactionCreated?: () => void
 }
 
-export function ChatPage({ database = defaultDb, onTransactionCreated }: ChatPageProps) {
+export function ChatPage({
+  database = defaultDb,
+  initialDate,
+  onTransactionCreated,
+}: ChatPageProps) {
   const [categories, setCategories] = useState<Category[]>([])
   const [accounts, setAccounts] = useState<Account[]>([])
   const [settings, setSettings] = useState<AppSettings | null>(null)
@@ -101,6 +106,7 @@ export function ChatPage({ database = defaultDb, onTransactionCreated }: ChatPag
       categories,
       accounts,
       defaultAccountId: settings?.defaultAccountId ?? null,
+      defaultDate: initialDate,
     })
 
     if (result.status === 'invalid') {
@@ -117,7 +123,7 @@ export function ChatPage({ database = defaultDb, onTransactionCreated }: ChatPag
           accountId: result.draft.accountId ?? settings?.defaultAccountId ?? accounts[0]?.id ?? null,
           transferToAccountId: result.draft.transferToAccountId ?? null,
           description: result.draft.description ?? textToParse,
-          transactionDate: result.draft.transactionDate ?? new Date().toISOString().split('T')[0]!,
+          transactionDate: result.draft.transactionDate ?? initialDate ?? new Date().toISOString().split('T')[0]!,
           source: 'chat',
           originalText: textToParse,
           refundOfId: null,

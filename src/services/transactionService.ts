@@ -66,6 +66,7 @@ export interface TransactionFilter {
   accountId?: string
   transferGroupId?: string
   refundOfId?: string
+  search?: string
   sortBy?: 'transactionDate' | 'createdAt' | 'amountPaise'
   order?: 'asc' | 'desc'
 }
@@ -200,6 +201,10 @@ export class TransactionService {
     }
     if (filter.refundOfId) {
       results = results.filter((t) => t.refundOfId === filter.refundOfId)
+    }
+    if (filter.search && filter.search.trim().length > 0) {
+      const q = filter.search.trim().toLowerCase()
+      results = results.filter((t) => t.description.toLowerCase().includes(q))
     }
 
     // Sort results

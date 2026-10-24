@@ -12,6 +12,7 @@ export interface ParseContext {
   accounts: readonly Account[]
   defaultAccountId?: string | null
   referenceDate?: Date
+  defaultDate?: string
 }
 
 export interface TransactionDraft {
@@ -122,7 +123,10 @@ export function parseTransaction(text: string, context: ParseContext): ParseResu
 
   // 3. Extract Date Token (today, yesterday, or YYYY-MM-DD)
   const refDate = context.referenceDate ?? new Date()
-  let transactionDate = getLocalTodayDateString(refDate)
+  let transactionDate =
+    context.defaultDate && isValidLocalDateString(context.defaultDate)
+      ? context.defaultDate
+      : getLocalTodayDateString(refDate)
   let dateFound = false
 
   const words = workingText.split(/\s+/).filter(Boolean)
