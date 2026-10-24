@@ -64,6 +64,7 @@ export const uuidSchema = z.string().uuid({
 // Transaction Schema
 export const transactionTypeSchema = z.enum(['income', 'expense', 'refund', 'transfer'])
 export const transactionSourceSchema = z.enum(['chat', 'form', 'import'])
+export const transferRoleSchema = z.enum(['source', 'destination']).nullable().optional()
 
 export const transactionSchema = z.object({
   id: uuidSchema,
@@ -77,6 +78,7 @@ export const transactionSchema = z.object({
   updatedAt: isoTimestampSchema,
   source: transactionSourceSchema,
   transferGroupId: uuidSchema.nullable(),
+  transferRole: transferRoleSchema,
   refundOfId: uuidSchema.nullable(),
   deletedAt: isoTimestampSchema.nullable().optional(),
 })

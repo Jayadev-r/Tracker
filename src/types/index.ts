@@ -5,6 +5,7 @@ export type CategoryType = 'income' | 'expense'
 export type BudgetPeriod = 'weekly' | 'monthly'
 export type ThemePreference = 'system' | 'light' | 'dark'
 export type WeekStartDay = 0 | 1 // 0 = Sunday, 1 = Monday
+export type TransferRole = 'source' | 'destination'
 
 export interface Transaction {
   id: string // UUID
@@ -18,6 +19,7 @@ export interface Transaction {
   updatedAt: string // ISO 8601 timestamp
   source: TransactionSource
   transferGroupId: string | null
+  transferRole?: TransferRole | null // Explicit transfer movement: 'source' (debit) vs 'destination' (credit)
   refundOfId: string | null
   deletedAt?: string | null
 }

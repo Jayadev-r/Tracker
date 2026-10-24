@@ -23,6 +23,11 @@ export class PaisaTrackDatabase extends Dexie {
       budgets: 'id, categoryId, period, periodStart, [categoryId+period+periodStart]',
       settings: 'id',
     })
+
+    // Version 2: Explicit transferRole indexing for unambiguous transfer movement tracking
+    this.version(2).stores({
+      transactions: 'id, transactionDate, type, categoryId, accountId, createdAt, transferGroupId, refundOfId, transferRole',
+    })
   }
 }
 
